@@ -5,6 +5,7 @@
   "description": "디노 러너(Dino Runner) - 장애물은 피하고 초식 공룡은 잡아먹는 안드로이드 게임",
   "scripts": {
     "serve": "node scripts/serve.js www 5173",
+    "icons": "node scripts/make-icons.js",
     "android:setup": "cap add android && node scripts/android-setup.js",
     "android:sync": "cap sync android",
     "android:build": "cap sync android && cd android && gradlew assembleDebug",
