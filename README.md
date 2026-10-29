@@ -3,6 +3,9 @@
 티라노가 달리며 장애물은 피하고 초식 공룡을 잡아먹는 안드로이드 게임.
 1000점마다 바다로 뛰어들어 헤엄치고, 600점 뒤에 다시 땅으로 올라온다.
 
+**APK 다운로드:** [최신 버전 받기](https://github.com/euiyoul-jeong/DinoRunner/releases/latest/download/DinoRunner.apk)
+— 폰에서 받은 뒤 설치할 때 "출처를 알 수 없는 앱 설치"를 허용해야 한다.
+
 - 게임 본체: `www/` (HTML5 Canvas + 순수 JS, 빌드 도구 없음)
 - 안드로이드 앱: Capacitor로 `www/`를 감싸서 APK로 만든다
 
@@ -26,11 +29,13 @@ npm run serve
 ### 처음 한 번 준비
 
 1. **Node.js 22 이상** 설치 (Capacitor 8 요구사항)
-2. **Android Studio** 설치 → 처음 실행할 때 SDK를 설치하게 둔다 (JDK 21이 함께 들어 있음)
-3. 환경 변수
-   - `JAVA_HOME` = `C:\Program Files\Android\Android Studio\jbr`
+2. **Android Studio** 설치 (SDK 관리용. 빌드할 때 필요한 SDK 36은 Gradle이 알아서 받는다)
+3. **JDK 21** 설치 (`winget install Microsoft.OpenJDK.21`)
+   — Android Studio에 들어 있는 JDK 25는 이 프로젝트의 Gradle 8.14가 지원하지 않는다
+4. 환경 변수
+   - `JAVA_HOME` = `C:\Program Files\Microsoft\jdk-21.x.x-hotspot` (설치된 폴더)
    - `ANDROID_HOME` = `%LOCALAPPDATA%\Android\Sdk`
-4. 프로젝트 폴더에서:
+5. 프로젝트 폴더에서:
 
 ```bash
 npm install
