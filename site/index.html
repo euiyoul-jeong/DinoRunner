@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>디노 러너 (Dino Runner)</title>
+  <meta name="description" content="티라노가 되어 장애물은 피하고 초식 공룡을 잡아먹는 아이용 게임. 브라우저에서 바로 하거나 안드로이드 앱으로 받아요.">
+  <meta property="og:title" content="디노 러너 (Dino Runner)">
+  <meta property="og:description" content="달리고, 뛰어넘고, 냠냠! 브라우저에서 바로 하거나 안드로이드 앱으로 받아요.">
+  <meta property="og:image" content="https://euiyoul-jeong.github.io/DinoRunner/screenshots/title.png">
+  <meta name="theme-color" content="#f7f4ec">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --card: #ffffff;
+      --ink: #444441;
+      --muted: #6f6e68;
+      --line: #e3ddcf;
+      --sand: #d9cfb8;
+      --orange: #D85A30;
+      --orange-ink: #ffffff;
+      --green: #3B6D11;
+      --green-ink: #ffffff;
+      --sea: #4A86B8;
+      --avoid-bg: #FCEBEB;
+      --avoid-ink: #A32D2D;
+      --eat-bg: #EAF3DE;
+      --eat-ink: #3B6D11;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #23253a;
+        --card: #2c2e44;
+        --ink: #e8e6de;
+        --muted: #b4b2c4;
+        --line: #3d4060;
+        --sand: #3a3a4a;
+        --avoid-bg: #4a2630;
+        --avoid-ink: #F7C1C1;
+        --eat-bg: #2b3d24;
+        --eat-ink: #C0DD97;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      line-height: 1.7;
+    }
+    a { color: inherit; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+    /* Top */
+    header { text-align: center; padding: 48px 0 24px; }
+    h1 {
+      font-family: "Jua", sans-serif;
+      font-weight: 400;
+      font-size: clamp(44px, 9vw, 72px);
+      line-height: 1.1;
+      margin: 0;
+    }
+    h1 small { display: block; font-size: 0.38em; color: var(--muted); margin-top: 6px; letter-spacing: 0.04em; }
+    .tagline { font-family: "Jua", sans-serif; font-size: clamp(20px, 4vw, 26px); margin: 18px 0 4px; }
+    .lead { color: var(--muted); margin: 0; }
+
+    .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 28px 0 8px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 26px; border-radius: 14px;
+      font-family: "Jua", sans-serif; font-size: 22px; text-decoration: none;
+      border: 3px solid transparent;
+      transition: transform 0.1s;
+    }
+    .btn:active { transform: translateY(2px); }
+    .btn svg { width: 22px; height: 22px; flex: none; }
+    .btn-play { background: var(--orange); color: var(--orange-ink); }
+    .btn-apk { background: var(--green); color: var(--green-ink); }
+    .note { font-size: 14px; color: var(--muted); text-align: center; margin: 6px 0 0; }
+
+    .qr { display: none; margin: 24px auto 0; text-align: center; }
+    .qr img { width: 150px; height: 150px; border-radius: 12px; background: #fff; padding: 6px; }
+    .qr p { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+    @media (hover: hover) and (pointer: fine) { .qr { display: block; } }
+
+    .hero-shot { display: block; width: 100%; border-radius: 16px; border: 3px solid var(--line); margin: 32px 0 0; }
+
+    /* Sections */
+    section { padding: 40px 0 8px; }
+    h2 { font-family: "Jua", sans-serif; font-weight: 400; font-size: 32px; margin: 0 0 16px; }
+    .features { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .features li { background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .features b { color: var(--orange); }
+
+    .gallery { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+    figure { margin: 0; }
+    figure img { width: 100%; display: block; border-radius: 12px; border: 2px solid var(--line); }
+    figcaption { font-size: 15px; color: var(--muted); text-align: center; margin-top: 6px; }
+
+    .dinos { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+    .place { background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 16px; }
+    .place h3 { font-family: "Jua", sans-serif; font-weight: 400; font-size: 24px; margin: 0 0 10px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+    .tag { padding: 4px 12px; border-radius: 999px; font-size: 15px; }
+    .avoid { background: var(--avoid-bg); color: var(--avoid-ink); }
+    .eat { background: var(--eat-bg); color: var(--eat-ink); }
+    .label { font-size: 14px; color: var(--muted); }
+
+    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 14px; overflow: hidden; border: 2px solid var(--line); }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    th { font-family: "Jua", sans-serif; font-weight: 400; font-size: 18px; }
+
+    ol.steps { padding-left: 22px; margin: 0; }
+    ol.steps li { margin-bottom: 6px; }
+
+    footer { text-align: center; padding: 48px 0 40px; color: var(--muted); font-size: 14px; }
+    .ground { height: 18px; background: var(--sand); border-top: 3px solid var(--line); margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>디노 러너<small>DINO RUNNER</small></h1>
+      <p class="tagline">달리고, 뛰어넘고, 냠냠!</p>
+      <p class="lead">티라노가 되어 장애물은 피하고 초식 공룡을 잡아먹는 게임이에요.</p>
+
+      <div class="actions">
+        <a class="btn btn-play" href="play/">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15l12-7.5z"/></svg>
+          지금 바로 해보기
+        </a>
+        <a class="btn btn-apk" href="https://github.com/euiyoul-jeong/DinoRunner/releases/latest/download/DinoRunner.apk">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4 3.6 3.6zM5 19h14v2H5z"/></svg>
+          안드로이드 앱 받기
+        </a>
+      </div>
+      <p class="note">설치 없이 브라우저에서 바로 할 수 있어요. 폰에서는 가로로 돌려서 해요.</p>
+
+      <div class="qr">
+        <img alt="안드로이드 앱 다운로드 QR 코드" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=https%3A%2F%2Fgithub.com%2Feuiyoul-jeong%2FDinoRunner%2Freleases%2Flatest%2Fdownload%2FDinoRunner.apk">
+        <p>안드로이드 폰 카메라로 찍으면 앱을 바로 받아요</p>
+      </div>
+
+      <img class="hero-shot" alt="디노 러너 시작 화면" src="screenshots/title.png">
+    </header>
+
+    <section>
+      <h2>이런 게임이에요</h2>
+      <ul class="features">
+        <li>티라노가 저절로 달려요. <b>탭하면 점프</b>, <b>누르고 있으면 숙이기!</b></li>
+        <li>선인장과 무서운 공룡은 <b>피하고</b>, 작은 초식 공룡은 닿기만 하면 <b>냠냠</b></li>
+        <li>먹을수록 <b>배부름</b>이 차요. 배부름이 바닥나면 게임이 끝나요</li>
+        <li>부딪혀도 바로 끝나지 않아요. 배부름이 조금 줄고 <b>잠깐 무적</b></li>
+        <li>1000점을 달리면 해변에서 <b>바다로 풍덩!</b> 물속에서 헤엄쳐요</li>
+        <li>밤과 낮이 바뀌고, 연속으로 먹으면 <b>콤보</b>로 점수가 두 배, 세 배</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>게임 화면</h2>
+      <div class="gallery">
+        <figure><img alt="땅에서 선인장을 뛰어넘는 티라노" src="screenshots/land.png" loading="lazy"><figcaption>선인장을 뛰어넘고 작은 공룡을 냠냠</figcaption></figure>
+        <figure><img alt="밤에 트리케라톱스를 뛰어넘는 티라노" src="screenshots/night.png" loading="lazy"><figcaption>밤에는 별과 달이 떠요. 빨간 ! 는 큰 공룡이 온다는 신호</figcaption></figure>
+        <figure><img alt="해변 끝에서 바다로 뛰어드는 티라노" src="screenshots/dive.png" loading="lazy"><figcaption>해변 끝에서 바다로 풍덩!</figcaption></figure>
+        <figure><img alt="물속에서 헤엄치는 티라노" src="screenshots/water.png" loading="lazy"><figcaption>물속에서는 누르고 있으면 위로 헤엄쳐요</figcaption></figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>등장하는 공룡들</h2>
+      <div class="dinos">
+        <div class="place">
+          <h3>땅</h3>
+          <div class="label">피해야 해요</div>
+          <div class="tags">
+            <span class="tag avoid">선인장</span><span class="tag avoid">바위</span>
+            <span class="tag avoid">프테라노돈</span><span class="tag avoid">트리케라톱스</span>
+          </div>
+          <div class="label">먹어요</div>
+          <div class="tags">
+            <span class="tag eat">콤프소그나투스</span><span class="tag eat">파키케팔로사우루스</span>
+          </div>
+        </div>
+        <div class="place">
+          <h3>바다</h3>
+          <div class="label">피해야 해요</div>
+          <div class="tags">
+            <span class="tag avoid">암초</span><span class="tag avoid">모사사우루스</span><span class="tag avoid">스피노사우루스</span>
+          </div>
+          <div class="label">먹어요</div>
+          <div class="tags">
+            <span class="tag eat">물고기</span><span class="tag eat">작은 수룡</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>조작 방법</h2>
+      <table>
+        <tr><th></th><th>땅</th><th>바다</th></tr>
+        <tr><td>화면 오른쪽 탭</td><td>점프 (길게 누르면 더 높이)</td><td rowspan="2">누르고 있으면 위로 헤엄,<br>떼면 천천히 가라앉아요</td></tr>
+        <tr><td>화면 왼쪽 누르고 있기</td><td>숙이기</td></tr>
+        <tr><td>키보드</td><td>Space / ↑ 점프, ↓ 숙이기</td><td>Space / ↑ 누르고 있으면 위로</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>안드로이드 앱 설치</h2>
+      <ol class="steps">
+        <li>안드로이드 폰에서 <b>안드로이드 앱 받기</b> 버튼을 누르거나 QR 코드를 찍어요.</li>
+        <li>받은 <b>DinoRunner.apk</b>를 열어요.</li>
+        <li>"출처를 알 수 없는 앱 설치"를 허용해 달라고 나오면 허용해요.</li>
+        <li>홈 화면의 <b>디노 러너</b>를 눌러 시작!</li>
+      </ol>
+      <p class="note" style="text-align:left">테스트용 빌드라서 Play 프로텍트 경고가 나올 수 있어요. 그래도 설치하면 돼요.</p>
+    </section>
+  </div>
+
+  <div class="ground"></div>
+  <footer>
+    <a href="https://github.com/euiyoul-jeong/DinoRunner">GitHub에서 코드 보기</a>
+  </footer>
+</body>
+</html>

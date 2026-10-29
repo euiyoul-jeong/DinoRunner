@@ -1,0 +1,42 @@
+# Publishes the homepage to https://euiyoul-jeong.github.io/DinoRunner/
+#   /         <- site/index.html
+#   /play/    <- www/ (the game itself, playable in the browser)
+#   /screenshots/ <- docs/screenshots/
+name: Deploy homepage
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site/play _site/screenshots
+          cp site/index.html _site/
+          cp -r www/. _site/play/
+          cp docs/screenshots/*.png _site/screenshots/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

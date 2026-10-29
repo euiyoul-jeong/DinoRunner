@@ -5,6 +5,8 @@
 **달리고, 뛰어넘고, 냠냠!**<br>
 티라노가 되어 장애물은 피하고 초식 공룡을 잡아먹는 아이용 안드로이드 게임
 
+**[홈페이지](https://euiyoul-jeong.github.io/DinoRunner/) · [브라우저에서 바로 해보기](https://euiyoul-jeong.github.io/DinoRunner/play/)**
+
 <br>
 
 <a href="https://github.com/euiyoul-jeong/DinoRunner/releases/latest/download/DinoRunner.apk">

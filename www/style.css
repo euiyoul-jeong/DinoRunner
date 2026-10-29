@@ -12,6 +12,40 @@ body {
   overscroll-behavior: none;
 }
 
+/* Phone held upright in a browser: ask to turn it sideways (the app itself is locked to landscape) */
+#rotate {
+  display: none;
+}
+
+@media (orientation: portrait) and (pointer: coarse) {
+  #rotate {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: #f7f4ec;
+    color: #444441;
+    font: bold 20px "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  }
+
+  #rotate .phone {
+    width: 56px;
+    height: 96px;
+    border: 6px solid #444441;
+    border-radius: 12px;
+    animation: turn 2s ease-in-out infinite;
+  }
+}
+
+@keyframes turn {
+  0%, 30% { transform: rotate(0deg); }
+  60%, 100% { transform: rotate(-90deg); }
+}
+
 #game {
   display: block;
   position: absolute;
