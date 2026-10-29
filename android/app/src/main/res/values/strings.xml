@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">공룡 러너</string>
-    <string name="title_activity_main">공룡 러너</string>
+    <string name="app_name">디노 러너</string>
+    <string name="title_activity_main">디노 러너</string>
     <string name="package_name">com.dinorunner.app</string>
     <string name="custom_url_scheme">com.dinorunner.app</string>
 </resources>

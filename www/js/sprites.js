@@ -6,7 +6,7 @@
 const PIXEL = 3;
 
 const PALETTE = {
-  W: '#F1EFE8', // white horns, beak, bone
+  W: '#F1EFE8', // white horns, beak, teeth
   R: '#E24B4A', // red eye
   Y: '#FAC775', // yellow eye
   F: '#F0997B', // triceratops frill
@@ -15,6 +15,7 @@ const PALETTE = {
   C: '#ED93B1', // coral on reefs
   G: '#639922', // seaweed
   S: '#D85A30', // spinosaurus sail
+  B: '#C9A877', // bone on the HUD drumstick
 };
 
 const SPRITES = {
@@ -127,9 +128,8 @@ const SPRITES = {
     '...XXXXXXXXXX.', '....XXXXXXXXXX', '....XX..XXX...', '...XX....XX...',
   ],
 
-  // HUD fullness icon (meat on the bone)
-  meat: ['..........', '..........', '...XXXX...', '..XXXXXX..', '.XXXXXXXX.', '.XXXXXXX..', '..XXXXX...', '...XXX....'],
-  bone: ['......WW..', '.....W..W.', '.....WWW..', '....WW....'],
+  // HUD fullness icon: a drumstick with the bone sticking out
+  meat: ['....XXXX..', '...XXXXXX.', '..XXXXXXXX', '..XXXXXXXX', '..XXXXXXX.', '..BXXXXX..', '.BB.......', 'BBB.......', '.B........'],
 };
 
 function spriteSize(name, pixel = PIXEL) {

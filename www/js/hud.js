@@ -19,8 +19,7 @@ const Hud = {
   // Pixel-art parts go on the low-res buffer with the rest of the world.
   drawPixels(buf, game) {
     const lift = game.player.eatFrames > 0 ? -2 : 0;
-    drawSprite(buf, 'meat', 12, 8 + lift, '#D85A30', 2.4);
-    drawSprite(buf, 'bone', 12, 8 + lift, '#F1EFE8', 2.4);
+    drawSprite(buf, 'meat', 8, 6 + lift, '#D85A30');
   },
 
   draw(ctx, game, world, viewW) {
@@ -201,7 +200,7 @@ const Hud = {
     ctx.textAlign = 'center';
     ctx.fillStyle = ink;
     ctx.font = `bold 40px ${FONT}`;
-    ctx.fillText('공룡 러너', cx, 92);
+    ctx.fillText('디노 러너', cx, 92);
     ctx.font = `15px ${FONT}`;
     ctx.fillText('장애물은 피하고, 초식 공룡은 냠냠!', cx, 124);
     ctx.fillStyle = world.color('subtle');
