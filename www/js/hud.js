@@ -6,14 +6,41 @@ const FONT = '"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif
 const BAR_X = 88;
 const BAR_W = 140;
 const HINT_FRAMES = 360; // touch hints show for the first 6 seconds of a run
+const MENU_BTN_W = 124;
+const MENU_BTN_H = 38;
+const MENU_BTN_GAP = 16;
+
+// Two side-by-side buttons centred on the screen, top edge at y
+function buttonPair(viewW, y) {
+  const left = viewW / 2 - MENU_BTN_W - MENU_BTN_GAP / 2;
+  return [
+    { x: left, y, w: MENU_BTN_W, h: MENU_BTN_H },
+    { x: viewW / 2 + MENU_BTN_GAP / 2, y, w: MENU_BTN_W, h: MENU_BTN_H },
+  ];
+}
 
 const Hud = {
   pauseButton(viewW) {
     return { x: viewW - 46, y: 6, w: 40, h: 34 };
   },
 
+  // X on the title screen sits where the pause button is during play
+  closeButton(viewW) {
+    return this.pauseButton(viewW);
+  },
+
   muteButton(viewW) {
     return { x: viewW - 88, y: 6, w: 40, h: 34 };
+  },
+
+  overButtons(viewW) {
+    const [retry, exit] = buttonPair(viewW, 198);
+    return { retry, exit };
+  },
+
+  pausedButtons(viewW) {
+    const [resume, exit] = buttonPair(viewW, VIEW_H / 2 + 6);
+    return { resume, exit };
   },
 
   // Pixel-art parts go on the low-res buffer with the rest of the world.
@@ -214,6 +241,46 @@ const Hud = {
     }
     ctx.textAlign = 'left';
     this.drawButtons(ctx, ink, viewW, false);
+
+    // X to leave the game
+    const b = this.closeButton(viewW);
+    const cx2 = b.x + b.w / 2;
+    const cy2 = b.y + b.h / 2;
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx2 - 8, cy2 - 8);
+    ctx.lineTo(cx2 + 8, cy2 + 8);
+    ctx.moveTo(cx2 + 8, cy2 - 8);
+    ctx.lineTo(cx2 - 8, cy2 + 8);
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+  },
+
+  // Rounded menu button; primary is the filled orange one
+  drawMenuButton(ctx, world, rect, label, primary, alpha = 1) {
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 10);
+    if (primary) {
+      ctx.fillStyle = '#D85A30';
+      ctx.fill();
+    } else {
+      ctx.fillStyle = world.color('sky');
+      ctx.fill();
+      ctx.strokeStyle = world.color('ink');
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.fillStyle = primary ? '#ffffff' : world.color('ink');
+    ctx.font = `bold 16px ${FONT}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, rect.x + rect.w / 2, rect.y + rect.h / 2 + 1);
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.globalAlpha = 1;
   },
 
   drawPaused(ctx, world, viewW) {
@@ -221,11 +288,11 @@ const Hud = {
     ctx.fillStyle = world.color('ink');
     ctx.textAlign = 'center';
     ctx.font = `bold 26px ${FONT}`;
-    ctx.fillText('잠깐 멈춤', viewW / 2, VIEW_H / 2 - 6);
-    ctx.font = `14px ${FONT}`;
-    ctx.fillStyle = world.color('subtle');
-    ctx.fillText('화면을 탭하면 계속해요', viewW / 2, VIEW_H / 2 + 22);
+    ctx.fillText('잠깐 멈춤', viewW / 2, VIEW_H / 2 - 24);
     ctx.textAlign = 'left';
+    const b = this.pausedButtons(viewW);
+    this.drawMenuButton(ctx, world, b.resume, '계속하기', true);
+    this.drawMenuButton(ctx, world, b.exit, '나가기', false);
   },
 
   drawGameOver(ctx, game, world, viewW) {
@@ -235,22 +302,23 @@ const Hud = {
     ctx.textAlign = 'center';
     ctx.fillStyle = ink;
     ctx.font = `bold 30px ${FONT}`;
-    ctx.fillText('게임 끝!', cx, VIEW_H / 2 - 30);
+    ctx.fillText('게임 끝!', cx, 98);
     ctx.font = `15px ${FONT}`;
-    ctx.fillText(game.overCause === 'hit' ? '부딪혀서 배가 텅 비었어요' : '배고파서 쓰러졌어요', cx, VIEW_H / 2 - 2);
+    ctx.fillText(game.overCause === 'hit' ? '부딪혀서 배가 텅 비었어요' : '배고파서 쓰러졌어요', cx, 126);
     ctx.font = `bold 18px ${FONT}`;
-    ctx.fillText('점수 ' + game.score, cx, VIEW_H / 2 + 26);
+    ctx.fillText('점수 ' + game.score, cx, 154);
     if (game.newBest) {
       ctx.fillStyle = '#D85A30';
       ctx.font = `bold 14px ${FONT}`;
-      ctx.fillText('새 최고 기록!', cx, VIEW_H / 2 + 48);
-    }
-    if (game.overFrames > GAME_OVER_TAP_DELAY && Math.floor(game.frame / 30) % 2 === 0) {
-      ctx.fillStyle = world.color('subtle');
-      ctx.font = `14px ${FONT}`;
-      ctx.fillText('화면을 탭해서 다시 하기', cx, VIEW_H / 2 + 74);
+      ctx.fillText('새 최고 기록!', cx, 178);
     }
     ctx.textAlign = 'left';
+
+    // Faded until taps are accepted, so a tap meant for jumping doesn't restart
+    const ready = game.overFrames > GAME_OVER_TAP_DELAY;
+    const b = this.overButtons(viewW);
+    this.drawMenuButton(ctx, world, b.retry, '다시 하기', true, ready ? 1 : 0.4);
+    this.drawMenuButton(ctx, world, b.exit, '나가기', false, ready ? 1 : 0.4);
   },
 };
 

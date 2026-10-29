@@ -116,20 +116,30 @@ function inside(px, py, r) {
 function handleTap(x, y) {
   Sound.unlock();
   const pointer = x !== null;
-  if (pointer && game.state !== 'over' && inside(x, y, Hud.muteButton(viewW))) {
+  const showsMute = game.state === 'title' || game.state === 'play';
+  if (pointer && showsMute && inside(x, y, Hud.muteButton(viewW))) {
     Sound.toggleMute();
     return true;
   }
   switch (game.state) {
     case 'title':
-      startRun();
+      if (pointer && inside(x, y, Hud.closeButton(viewW))) exitGame();
+      else startRun();
       return true;
-    case 'paused':
-      resume();
+    case 'paused': {
+      // Keyboard Space/Up resumes; on screen only the two buttons do something
+      const b = Hud.pausedButtons(viewW);
+      if (!pointer || inside(x, y, b.resume)) resume();
+      else if (inside(x, y, b.exit)) goToTitle();
       return true;
-    case 'over':
-      if (game.overFrames > GAME_OVER_TAP_DELAY) startRun();
+    }
+    case 'over': {
+      if (game.overFrames <= GAME_OVER_TAP_DELAY) return true;
+      const b = Hud.overButtons(viewW);
+      if (!pointer || inside(x, y, b.retry)) startRun();
+      else if (inside(x, y, b.exit)) goToTitle();
       return true;
+    }
     case 'play':
       if (pointer && inside(x, y, Hud.pauseButton(viewW))) {
         pause();
@@ -169,6 +179,12 @@ function startRun() {
     overCause: '',
     overFrames: 0,
   });
+}
+
+// Title screen X: closes the Android app; in a browser, back to the homepage
+function exitGame() {
+  if (Native.isApp()) Native.exitApp();
+  else location.href = '../';
 }
 
 function goToTitle() {
