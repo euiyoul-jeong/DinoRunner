@@ -1,0 +1,6 @@
+node_modules/
+*.apk
+*.aab
+.claude/
+.DS_Store
+Thumbs.db

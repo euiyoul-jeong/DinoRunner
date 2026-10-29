@@ -1,0 +1,23 @@
+{
+  "name": "dino-runner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "공룡 러너 - 장애물은 피하고 초식 공룡은 잡아먹는 안드로이드 게임",
+  "scripts": {
+    "serve": "node scripts/serve.js www 5173",
+    "android:setup": "cap add android && node scripts/android-setup.js",
+    "android:sync": "cap sync android",
+    "android:build": "cap sync android && cd android && gradlew assembleDebug",
+    "android:open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0"
+  }
+}
